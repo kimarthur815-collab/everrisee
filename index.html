@@ -31,7 +31,7 @@ const claude={use:async()=>({limits:async()=>({images:true}),json:async(p,o)=>{o
 if(!k){k=prompt('Google AI Studio에서 만든 Gemini API 키를 입력하세요 (이 기기의 브라우저에만 저장돼요)');if(!k)throw new Error('API 키가 필요해요');localStorage.setItem('srpg_gkey',k.trim())}
 const parts=[];for(const b of(o.images||[])){const d=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(b)});parts.push({inlineData:{mimeType:'image/jpeg',data:d}})}
 parts.push({text:p+'\n\nJSON 객체만 출력하세요.'});
-const M=localStorage.getItem('srpg_model')||'gemini-2.5-flash';
+const M=localStorage.getItem('srpg_model')||'gemini-3.8-flash';
 const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+M+':generateContent?key='+encodeURIComponent(k),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts}],generationConfig:{responseMimeType:'application/json'}})});
 const j=await r.json();if(!r.ok){const m=(j.error&&j.error.message)||('HTTP '+r.status);if(/API key/i.test(m))localStorage.removeItem('srpg_gkey');const e=new Error(m);e.code=r.status;throw e}
 const c=j.candidates&&j.candidates[0];if(!c||!c.content)throw new Error('AI가 응답하지 않았어요('+((c&&c.finishReason)||'빈 응답')+')');
